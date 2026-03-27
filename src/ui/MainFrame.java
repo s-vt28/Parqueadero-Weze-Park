@@ -24,7 +24,7 @@ public class MainFrame extends JFrame {
     }
 
     private void initComponents() {
-        setTitle("Weze Parking - Interactivo 🚗");
+        setTitle("PARQUEADERO WEZE - INTERACTIVO 🚗");
         setSize(900, 550);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
