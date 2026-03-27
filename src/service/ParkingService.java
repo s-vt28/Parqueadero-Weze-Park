@@ -20,8 +20,7 @@ public class ParkingService {
         }
         return "Parqueadero lleno";
     }
-
-    // 🔥 AQUÍ PUEDES PEGARLO (debajo de este método por ejemplo)
+    
     public String ingresarAutoEnPosicion(int placa, int posicion) {
         if (!parking.getOcupados()[posicion]) {
             parking.getPlacas()[posicion] = placa;
