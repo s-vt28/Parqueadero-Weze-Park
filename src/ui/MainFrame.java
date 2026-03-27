@@ -2,43 +2,75 @@ package ui;
 
 import service.ParkingService;
 import javax.swing.*;
+import java.awt.*;
 
 public class MainFrame extends JFrame {
 
     private ParkingService service;
+    private JButton[] espacios = new JButton[10];
 
     public MainFrame(ParkingService service) {
         this.service = service;
         initComponents();
+        actualizarVista();
     }
 
     private void initComponents() {
         setTitle("Weze Parking 🚗");
-        setSize(400, 300);
+        setSize(600, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(null);
+        setLayout(new BorderLayout());
 
+        // Panel superior o Botones
+        JPanel panelTop = new JPanel();
+        
         JButton btnIngresar = new JButton("Ingresar Auto");
-        btnIngresar.setBounds(100, 20, 200, 30);
-
-        JButton btnPersona = new JButton("Registrar Persona");
-        btnPersona.setBounds(100, 60, 200, 30);
-
         JButton btnSalida = new JButton("Salida Auto");
-        btnSalida.setBounds(100, 100, 200, 30);
+        JButton btnPersona = new JButton("Registrar Persona");
+        JButton btnMostrar = new JButton("Ver Datos");
 
-        JButton btnMostrar = new JButton("Mostrar Datos");
-        btnMostrar.setBounds(100, 140, 200, 30);
+        panelTop.add(btnIngresar);
+        panelTop.add(btnSalida);
+        panelTop.add(btnPersona);
+        panelTop.add(btnMostrar);
 
-        add(btnIngresar);
-        add(btnPersona);
-        add(btnSalida);
-        add(btnMostrar);
+        add(panelTop, BorderLayout.NORTH);
+
+        // Panel Central (Parqueadero)
+        JPanel panelParking = new JPanel();
+        panelParking.setLayout(new GridLayout(2, 5, 10, 10));
+        panelParking.setBorder(BorderFactory.createTitledBorder("Parqueadero"));
+
+        for (int i = 0; i < 10; i++) {
+            espacios[i] = new JButton();
+            espacios[i].setEnabled(false);
+            panelParking.add(espacios[i]);
+        }
+
+        add(panelParking, BorderLayout.CENTER);
+
+        // Eventos
 
         btnIngresar.addActionListener(e -> {
             String input = JOptionPane.showInputDialog("Ingrese placa (3 dígitos):");
-            int placa = Integer.parseInt(input);
-            JOptionPane.showMessageDialog(this, service.ingresarAuto(placa));
+            if (input != null && input.matches("\\d{3}")) {
+                int placa = Integer.parseInt(input);
+                JOptionPane.showMessageDialog(this, service.ingresarAuto(placa));
+                actualizarVista();
+            } else {
+                JOptionPane.showMessageDialog(this, "Placa inválida");
+            }
+        });
+
+        btnSalida.addActionListener(e -> {
+            String input = JOptionPane.showInputDialog("Ingrese placa:");
+            if (input != null && input.matches("\\d{3}")) {
+                int placa = Integer.parseInt(input);
+                JOptionPane.showMessageDialog(this, service.salidaAuto(placa));
+                actualizarVista();
+            } else {
+                JOptionPane.showMessageDialog(this, "Placa inválida");
+            }
         });
 
         btnPersona.addActionListener(e -> {
@@ -46,16 +78,26 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Persona registrada");
         });
 
-        btnSalida.addActionListener(e -> {
-            String input = JOptionPane.showInputDialog("Ingrese placa:");
-            int placa = Integer.parseInt(input);
-            JOptionPane.showMessageDialog(this, service.salidaAuto(placa));
-        });
-
         btnMostrar.addActionListener(e -> {
             JOptionPane.showMessageDialog(this,
                 "Personas en cine: " + service.getPersonas() +
-                "\nAutos salidos: " + service.getSalidas());
+                "\nAutos que salieron: " + service.getSalidas());
         });
+    }
+
+    // Optimiza la vista general del parqueadero
+    private void actualizarVista() {
+        int[] placas = service.getParking().getPlacas();
+        boolean[] ocupados = service.getParking().getOcupados();
+
+        for (int i = 0; i < 10; i++) {
+            if (ocupados[i]) {
+                espacios[i].setText("🚗 " + placas[i]);
+                espacios[i].setBackground(Color.RED);
+            } else {
+                espacios[i].setText("Libre");
+                espacios[i].setBackground(Color.GREEN);
+            }
+        }
     }
 }
