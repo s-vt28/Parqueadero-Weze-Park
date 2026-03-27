@@ -2,6 +2,7 @@ package service;
 
 import model.Parking;
 
+
 public class ParkingService {
     private Parking parking;
 
@@ -34,4 +35,9 @@ public class ParkingService {
     public void registrarPersona() { parking.agregarPersona(); }
     public int getPersonas() { return parking.getPersonasCine(); }
     public int getSalidas() { return parking.getTotalSalidas(); }
+
+    public Parking getParking() {
+    return parking;
+}
+
 }
